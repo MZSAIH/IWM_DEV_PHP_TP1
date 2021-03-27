@@ -20,12 +20,12 @@
         //Inserting categories
         $stmt_p->bindValue(1, $product->ref, PDO::PARAM_STR);
         $stmt_p->bindValue(2, $product->name, PDO::PARAM_STR);
-        $stmt_p->bindValue(3, $product->description, PDO::PARAM_STR);
-        $stmt_p->bindValue(4, $product->type, PDO::PARAM_STR);
-        $stmt_p->bindValue(5, $product->manufacturer, PDO::PARAM_STR);
-        $stmt_p->bindValue(6, $product->image, PDO::PARAM_STR);
-        $stmt_p->bindValue(7, $product->shipping, PDO::PARAM_STR);
-        $stmt_p->bindValue(8, $product->price, PDO::PARAM_STR);
+        $stmt_p->bindValue(3, $product->type, PDO::PARAM_STR);
+        $stmt_p->bindValue(4, $product->price, PDO::PARAM_STR);
+        $stmt_p->bindValue(5, $product->shipping, PDO::PARAM_STR);
+        $stmt_p->bindValue(6, $product->description, PDO::PARAM_STR);
+        $stmt_p->bindValue(7, $product->manufacturer, PDO::PARAM_STR);
+        $stmt_p->bindValue(8, $product->image, PDO::PARAM_STR);
         try{
             $stmt_p->execute();
         }
