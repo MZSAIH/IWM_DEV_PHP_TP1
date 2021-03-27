@@ -6,50 +6,48 @@
     );
     
     header('Content-Type: application/json');
+
     $json_str = file_get_contents("products.json");
-    $json_array = json_decode($json_str, true);
+    
+    $json_array = json_decode($json_str);
+
+    $stmt_p = $pdo->prepare("INSERT INTO product VALUES (?,?,?,?,?,?,?,?)");
+    $stmt_c = $pdo->prepare("INSERT INTO category VALUES (?,?)");
+    $stmt_pc = $pdo->prepare("INSERT INTO prod_cat VALUES (?,?)");
 
     //var_dump($json_array);
-    foreach ($json_array as $key => $product) {
-        //Inserting products
-        $sql_product = "INSERT INTO product VALUES (
-                                    '{$product["ref"]}',
-                                    '{$product["name"]}',
-                                    '{$product["type"]}',
-                                    '{$product["price"]}',
-                                    '{$product["shipping"]}',
-                                    '{$product["description"]}',
-                                    '{$product["manufacturer"]}',
-                                    '{$product["image"]}')";
+    foreach ($json_array as $product) {
+        //Inserting categories
+        $stmt_p->bindValue(1, $product->ref, PDO::PARAM_STR);
+        $stmt_p->bindValue(2, $product->name, PDO::PARAM_STR);
+        $stmt_p->bindValue(3, $product->description, PDO::PARAM_STR);
+        $stmt_p->bindValue(4, $product->type, PDO::PARAM_STR);
+        $stmt_p->bindValue(5, $product->manufacturer, PDO::PARAM_STR);
+        $stmt_p->bindValue(6, $product->image, PDO::PARAM_STR);
+        $stmt_p->bindValue(7, $product->shipping, PDO::PARAM_STR);
+        $stmt_p->bindValue(8, $product->price, PDO::PARAM_STR);
         try{
-            $ret = $pdo->exec($sql_product);
+            $stmt_p->execute();
         }
         catch(Exception $e){
             echo $e->getMessage()."\n";
-            if($e->getCode()==42000){
-                //echo $e."\n";
-                //echo $sql_product."\n";
-            }
         }
         
-        $categories = $product["category"];
-        foreach ($categories as $key => $category) {
+        foreach ($product->category as $category) {
             //Inserting categories
-            $sql_category = "INSERT INTO category VALUES (
-                                        '{$category["id"]}',
-                                        '{$category["name"]}')";
+             $stmt_c->bindValue(1, $category->id, PDO::PARAM_STR);
+             $stmt_c->bindValue(2, $category->name, PDO::PARAM_STR);
             try{
-                $ret = $pdo->exec($sql_category);
+                $stmt_c->execute();
             }
             catch(Exception $e){
                 echo $e->getMessage()."\n";
             }
             //Affecting products to categories 
-            $sql_prod_cat = "INSERT INTO prod_cat VALUES (
-                                        '{$product["ref"]}',
-                                        '{$category["id"]}')";
+            $stmt_pc->bindValue(1, $product->ref, PDO::PARAM_STR);
+            $stmt_pc->bindValue(2, $category->id, PDO::PARAM_STR);                            
             try{
-                $ret = $pdo->exec($sql_prod_cat);
+                $stmt_pc->execute();
             }
             catch(Exception $e){
                 echo $e->getMessage()."\n";
